@@ -1,0 +1,4 @@
+/build
+/test-classes
+*.bak
+/target

@@ -1,0 +1,21 @@
+group 'com.vorspack'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
+dependencies {
+    compile group: 'org.jsoup', name: 'jsoup', version: '1.11.2'
+    compile group: 'org.apache.poi', name: 'poi', version: '3.17'
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter', version: '2.0.1.RELEASE'
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-log4j', version: '1.3.8.RELEASE'
+
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: '2.0.1.RELEASE'
+}
