@@ -2,30 +2,32 @@ package com.vorspack.ui;
 
 import com.vorspack.domain.Product;
 import com.vorspack.network.Html;
-import com.vorspack.network.HtmlImpl;
+import com.vorspack.service.ExcelExportService;
+import com.vorspack.util.LogTool;
 import com.vorspack.util.ProductFactory;
-import com.vorspack.util.RegexTool;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.swing.*;
-import javax.swing.text.Document;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 @Component
 public class AsaWindow extends JPanel {
 
     private JTextField textField = new JTextField(20);
     private JTextArea textArea = new JTextArea();
+    private Product product;
+    private String[] cellNames={"链接","品牌","卖家","FBA","自营","评分","上架时间","review数量","价格","类目排名","销量","QA数量"};
+
     @Autowired
     private Html html;
-    private Product product;
+    @Autowired
+    private ExcelExportService exportService;
 
     public AsaWindow() {
         //主界面布局
@@ -40,11 +42,15 @@ public class AsaWindow extends JPanel {
         //清空按钮
         JButton clearBtn = new JButton("清空");
         clearBtn.addActionListener(new ClearBtnListener());
+        //导出Excel按钮
+        JButton exportBtn = new JButton("导出Excel");
+        exportBtn.addActionListener(new ExportBtnListener());
         //评论按钮
         JButton reviewBtn = new JButton("评论");
         reviewBtn.addActionListener(new ReviewBtnListener());
         panel.add(confirmBtn);
         panel.add(clearBtn);
+        panel.add(exportBtn);
         panel.add(reviewBtn);
         add(panel, BorderLayout.NORTH);
         add(createScrollPane(), BorderLayout.CENTER);
@@ -76,13 +82,7 @@ public class AsaWindow extends JPanel {
                     org.jsoup.nodes.Document document = html.getHtmlDocument(url);
                     appendText(document.html());
                     product = ProductFactory.createProduct(document);
-                    appendText(product.getProductTitle());
-                    appendText(product.getBrand());
                     appendText(product.toString());
-//                    String htmlText=html.getHtmlDocument("https://www.amazon.com/" +
-//                            "High-Sierra-Deluxe-Trapezoid-Black/product-reviews/B01LQPR72G/" +
-//                            "ref=cm_cr_dp_d_show_all_btm?ie=UTF8&reviewerType=all_reviews").html();
-//                    textArea.append(htmlText);
                 } catch (IOException e1) {
                     textArea.append("网址错误");
                 }
@@ -104,9 +104,18 @@ public class AsaWindow extends JPanel {
         public void actionPerformed(ActionEvent e) {
             textArea.setText("");
             ArrayList<String> reviews = product.getReviews();
-            Logger logger = LogManager.getLogger(AsaWindow.class);
-            logger.info("Empty "+reviews.isEmpty());
+            LogTool.getLog().info("Empty "+reviews.isEmpty());
             reviews.forEach(it->textArea.append(it+"\n"));
+        }
+    }
+
+    private class ExportBtnListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            List<Product> list=new ArrayList<>();
+//            product.setQaNum(10000);
+            list.add(product);
+            exportService.makeWorkBook("产品分析表格",cellNames,list);
         }
     }
 }

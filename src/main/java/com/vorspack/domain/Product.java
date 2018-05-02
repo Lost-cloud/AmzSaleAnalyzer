@@ -1,18 +1,26 @@
 package com.vorspack.domain;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Product {
+public class Product implements Serializable{
     private String brand;
     private String productTitle;
     private String seller;
     private String price;
     private String shippingMsg;
     private boolean ifFBA;
-    private Integer reviewNum;
-    private String rankInfo;
-    private float rate;
 
+    private int qaNum;
+
+    private String link;
+    private SellerType sellerType;
+
+    private Integer reviewNum;
+
+    private String rankInfo;
+
+    private float rate;
     private ArrayList<String> reviews;
     private ArrayList<String> features;
 
@@ -20,7 +28,8 @@ public class Product {
     public String toString() {
         return "Brand : "+brand+
                 "\nproductTitle : "+productTitle +
-                "\nsale by "+seller+
+                "\nsale by "+seller+" and Seller type is "+sellerType.name()+
+                "\nFBA :"+ifFBA+
                 "\nprice : "+price+
                 "\nRank : "+rankInfo+
                 "\nRate : "+rate+
@@ -35,6 +44,29 @@ public class Product {
             return this.reviewNum.equals(prod.reviewNum);
         }
         return false;
+    }
+    public int getQaNum() {
+        return qaNum;
+    }
+
+    public void setQaNum(int qaNum) {
+        this.qaNum = qaNum;
+    }
+
+    public String getLink() {
+        return link;
+    }
+
+    public void setLink(String link) {
+        this.link = link;
+    }
+
+    public SellerType getSellerType() {
+        return sellerType;
+    }
+
+    public void setSellerType(SellerType sellerType) {
+        this.sellerType = sellerType;
     }
 
     public String getBrand() {
