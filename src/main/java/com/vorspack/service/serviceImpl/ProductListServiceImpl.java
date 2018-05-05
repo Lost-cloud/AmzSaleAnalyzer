@@ -16,20 +16,12 @@ import java.util.List;
 public class ProductListServiceImpl implements ProductListService {
     @Autowired
     private ProductService productService;
-    @Autowired
-    private Html html;
     @Override
     public List<Product> createProductList(List<String> links) {
         List<Product> productList=new ArrayList<>();
-        Product product=null;
         links.forEach(it->{
             if (!(it.contains("https://www.amazon.com/dp") || it.contains("/gp"))) {
-                try {
-                    Document document = html.getHtmlDocument(it);
-                    productList.add(productService.createProduct(document));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                    productList.add(productService.createProduct(it));
             }
         });
         return productList;

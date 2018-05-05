@@ -3,6 +3,8 @@ package com.vorspack.ui;
 import com.vorspack.domain.Product;
 import com.vorspack.network.Html;
 import com.vorspack.service.ExcelExportService;
+import com.vorspack.service.LinkListService;
+import com.vorspack.service.ProductListService;
 import com.vorspack.util.LogTool;
 import com.vorspack.util.ProductFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,8 +28,17 @@ public class AsaWindow extends JPanel {
 
     @Autowired
     private Html html;
+
     @Autowired
     private ExcelExportService exportService;
+
+    @Autowired
+    private LinkListService linkListService;
+
+    @Autowired
+    private ProductListService productListService;
+    private List<Product> products;
+
 
     public AsaWindow() {
         //主界面布局
@@ -45,12 +56,16 @@ public class AsaWindow extends JPanel {
         //导出Excel按钮
         JButton exportBtn = new JButton("导出Excel");
         exportBtn.addActionListener(new ExportBtnListener());
+        //获取产品链接按钮
+        JButton productLinkBtn = new JButton("获取产品链接");
+        productLinkBtn.addActionListener(new ProductLinkBtnListener());
         //评论按钮
         JButton reviewBtn = new JButton("评论");
         reviewBtn.addActionListener(new ReviewBtnListener());
         panel.add(confirmBtn);
         panel.add(clearBtn);
         panel.add(exportBtn);
+        panel.add(productLinkBtn);
         panel.add(reviewBtn);
         add(panel, BorderLayout.NORTH);
         add(createScrollPane(), BorderLayout.CENTER);
@@ -71,6 +86,10 @@ public class AsaWindow extends JPanel {
         return label;
     }
 
+    private void appendText(String text) {
+        textArea.append(text+"\n");
+    }
+
     private class ConfirmBtnListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -81,7 +100,7 @@ public class AsaWindow extends JPanel {
                 try {
                     org.jsoup.nodes.Document document = html.getHtmlDocument(url);
                     appendText(document.html());
-                    product = ProductFactory.createProduct(document);
+                    product = ProductFactory.createProduct(url);
                     appendText(product.toString());
                 } catch (IOException e1) {
                     textArea.append("网址错误");
@@ -89,9 +108,7 @@ public class AsaWindow extends JPanel {
             }
         }
     }
-    private void appendText(String text) {
-        textArea.append(text+"\n");
-    }
+
     private class ClearBtnListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -112,10 +129,26 @@ public class AsaWindow extends JPanel {
     private class ExportBtnListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            List<Product> list=new ArrayList<>();
-//            product.setQaNum(10000);
-            list.add(product);
-            exportService.makeWorkBook("产品分析表格",cellNames,list);
+//            List<Product> list=new ArrayList<>();
+////            product.setQaNum(10000);
+//            list.add(product);
+//            exportService.makeWorkBook("产品分析表格",cellNames,list);
+            exportService.makeWorkBook("backpack2",cellNames,products);
+        }
+    }
+
+    private class ProductLinkBtnListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            String url = textField.getText();
+            if (url.isEmpty()) {
+                textArea.append("请输入网址\n");
+            } else {
+                List<String> links = linkListService.createLinkList(url);
+                links.forEach(it -> LogTool.getLog().info(it));
+                products = productListService.createProductList(links);
+                products.forEach(it->appendText(it.toString()));
+            }
         }
     }
 }

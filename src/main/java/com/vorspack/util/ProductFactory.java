@@ -2,6 +2,7 @@ package com.vorspack.util;
 
 import com.vorspack.domain.Product;
 import com.vorspack.domain.SellerType;
+import com.vorspack.exception.RegexNotMatchException;
 import com.vorspack.network.Html;
 import com.vorspack.network.HtmlImpl;
 import org.jsoup.nodes.Document;
@@ -13,67 +14,138 @@ import java.io.IOException;
 import java.util.List;
 
 public class ProductFactory {
-    public static Product createProduct(Document document) {
-        //渲染的html，当无法通过Id找到信息时，用来使用正则表达式查找。
-        String allHtmlText = document.html();
+    public static final int UNKNOWN = 0;
+    private static Document document;
+    private static String allHtmlText;
+    private static Product product;
+    public static Product createProduct(String link) throws RegexNotMatchException {
 
-        Product product = new Product();
-        //产品标题
-        product.setProductTitle(document.getElementById("productTitle").text());
+        init(link);
+
+        //设置链接
+        setLink(link);
+
+        //设置产品标题
+        setProductTitle();
+
+        //设置品牌
+        setBrand();
+
+        //设置价格
+        setPrice();
+
+        //设置卖家信息
+        setSellerInfo();
+
+        //设置卖家类型
+        setSellerType();
+
+        //设置排行信息
+        setRank();
+
+        //设置星级
+        setRate();
+
+        //设置review数量
+        setReviewNum();
+
+        //设置review
+        setReviews();
+
+        //设置QA数量
+        setQANum();
+
+
+        return product;
+    }
+
+    private static void init(String link) {
+        Html html = new HtmlImpl();
+        try {
+            document = html.getHtmlDocument(link);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        //渲染的html，当无法通过Id找到信息时，用来使用正则表达式查找。
+        allHtmlText = document.html();
+        product = new Product();
+    }
+
+    private static void setLink(String link) {
+        product.setLink(link);
+    }
+
+    private static void setQANum() {
+
+    }
+
+    private static void setRank() {
+        Element salesRank = document.getElementById("SalesRank");
+        if (salesRank == null) {
+            product.setRankInfo("Rank not found");
+        }else product.setRankInfo(salesRank.text());
+    }
+
+    private static void setPrice() {
+        //产品价格
+        product.setPrice(document.getElementById("priceblock_ourprice").text());
+    }
+
+    private static void setBrand() {
         //产品品牌
         Element brand = document.getElementById("brand");
         if (brand == null) {
             brand = document.getElementById("bylineInfo");
             product.setBrand(brand.text());
         }else {product.setBrand(brand.text());}
+    }
 
-        //产品价格
-        product.setPrice(document.getElementById("priceblock_ourprice").text());
+    private static void setProductTitle() {
+        //产品标题
+        product.setProductTitle(document.getElementById("productTitle").text());
+    }
 
-        //设置卖家信息
-        setSellerInfo(document, product);
-
-        //设置卖家类型
-        setSellerType(allHtmlText, product);
-
-
-        //设置排行信息
-        Element salesRank = document.getElementById("SalesRank");
-        if (salesRank == null) {
-            product.setRankInfo("Rank not found");
-        }else product.setRankInfo(salesRank.text());
-
+    private static void setRate() throws RegexNotMatchException {
         //评分：4.0 out of 5 star
         String rate = document.getElementById("acrPopover").attr("title");
         product.setRate(Float.parseFloat(RegexTool.getInfo("\\d.\\d",rate)));
+    }
 
-        //评论：201 customer reviews
+    private static void setReviewNum() throws RegexNotMatchException {
+        //评论数：201 customer reviews
         String input=document.getElementById("acrCustomerReviewText").text();
         String reviewNumText = RegexTool.getInfo("(\\S+) customer", input, 1).replaceAll(",","");
         int reviewNum = Integer.parseInt(reviewNumText);
         product.setReviewNum(reviewNum);
-
-        //抓取评论
-        String customerReviewUrl ="https://www.amazon.com"+RegexTool.getInfo("href=[\"{0,1}](\\S*)[\"{0,1}]>See all ", allHtmlText,1);
-        LogTool.getLog().info(customerReviewUrl);
-        product.setReviews(getReviews(customerReviewUrl));
-        return product;
     }
 
-    private static void setSellerType(String allHtmlText, Product product) {
+    private static void setReviews() throws RegexNotMatchException {
+        //抓取评论
+        String customerReviewUrl ="https://www.amazon.com"+ RegexTool.getInfo("href=[\"{0,1}](\\S*)[\"{0,1}]>See all ", allHtmlText,1);
+//        LogTool.getLog().info(customerReviewUrl);
+        product.setReviews(getReviews(customerReviewUrl));
+    }
+
+    private static void setSellerType() {
         //设置卖家类型：亚马逊自营，第三方跟卖，品牌卖家
         //当存在选择尺寸等情况时，不存在卖家信息，所以放置在一个try-catch 块中。
         //默认值为0；
-        String sellerNumText="0";
+        String sellerNumText;
         if (product.getSeller().equals("Unknown")){
-            setSellerType(product, Integer.parseInt(sellerNumText));
+            setSellerType(UNKNOWN);
         }else {
-            sellerNumText = RegexTool.getInfo("[nN]ew</b> \\S(\\d)", allHtmlText, 1);
-            setSellerType(product, Integer.parseInt(sellerNumText));
+            LogTool.getLog().info(product.getLink());
+            try {
+                sellerNumText = RegexTool.getInfo("[nN]ew</b> \\S(\\d)", allHtmlText, 1);
+                setSellerType(Integer.parseInt(sellerNumText));
+            } catch (RegexNotMatchException e) {
+                setSellerType(UNKNOWN);
+                e.printStackTrace();
+            }
         }
     }
 
-    private static void setSellerType(Product product, int sellerNum) {
+    private static void setSellerType(int sellerNum) {
         //抓取不到卖家数时，设置为unknown
         if (sellerNum == 0) {
             product.setSellerType(SellerType.UNKNOWN);
@@ -89,7 +161,7 @@ public class ProductFactory {
         }else {product.setSellerType(SellerType.OTHER_SELLER);}
     }
 
-    private static void setSellerInfo(Document document, Product product) {
+    private static void setSellerInfo() throws RegexNotMatchException {
 
         //售卖信息抓取
         String shipsMsg = document.getElementById("shipsFromSoldBy_feature_div").text();
@@ -99,7 +171,6 @@ public class ProductFactory {
             LogTool.getLog().warn("The shipsMsg == null");
             return;
         }
-        LogTool.getLog().warn("The shipsMsg == "+shipsMsg);
 
         //如果品牌为AmazonBasics，设置卖家为Amazon.com
         if (product.getBrand().equals("AmazonBasics")) {

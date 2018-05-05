@@ -1,5 +1,6 @@
 package com.vorspack.util;
 
+import com.vorspack.exception.RegexNotMatchException;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -7,7 +8,7 @@ import static org.junit.Assert.*;
 public class RegexToolTest {
 
     @Test
-    public void getInfo() {
+    public void getInfo() throws RegexNotMatchException {
         String ss = "201 customer reviews";
         System.out.println(RegexTool.getInfo("\\d+", ss));
         String s1 = "Sold by e4Hats ss and Fulfilled by Amazon. Gift-wrap available. " +
@@ -27,7 +28,7 @@ public class RegexToolTest {
     }
 
     @Test
-    public void testGetReviews() {
+    public void testGetReviews() throws RegexNotMatchException {
         String input = "</span></div></div></div></div></div><a id=\"end-reviews\" class=\"a-link-normal\" href=\"#\"></a></div><div " +
                 "id=\"reviews-medley-footer\" data-hook=\"reviews-medley-footer\" class=\"a-section\"><div class=\"a-row a-spacing-large\">" +
                 "<a data-hook=\"see-all-reviews-link-foot\" class=\"a-link-emphasis a-text-bold\" href=\"/High-Sierra-Deluxe-Trapezoid-Black/product-reviews/B01LQPR72G/ref=cm_cr_dp_d_show_all_btm?" +

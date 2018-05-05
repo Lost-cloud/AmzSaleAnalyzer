@@ -8,11 +8,8 @@ public class Product implements Serializable{
     private String productTitle;
     private String seller;
     private String price;
-    private String shippingMsg;
     private boolean ifFBA;
-
     private int qaNum;
-
     private String link;
     private SellerType sellerType;
 
@@ -99,14 +96,6 @@ public class Product implements Serializable{
 
     public void setPrice(String price) {
         this.price = price;
-    }
-
-    public String getShippingMsg() {
-        return shippingMsg;
-    }
-
-    public void setShippingMsg(String shippingMsg) {
-        this.shippingMsg = shippingMsg;
     }
 
     public boolean isIfFBA() {
