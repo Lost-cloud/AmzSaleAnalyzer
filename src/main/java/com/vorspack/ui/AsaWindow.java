@@ -1,6 +1,7 @@
 package com.vorspack.ui;
 
 import com.vorspack.domain.Product;
+import com.vorspack.exception.RegexNotMatchException;
 import com.vorspack.network.Html;
 import com.vorspack.service.ExcelExportService;
 import com.vorspack.service.LinkListService;
@@ -47,6 +48,7 @@ public class AsaWindow extends JPanel {
         JPanel panel = new JPanel();
         panel.add(createLabel());
         panel.add(textField);
+
         //确认按钮
         JButton confirmBtn = new JButton("确认");
         confirmBtn.addActionListener(new ConfirmBtnListener());
@@ -62,6 +64,7 @@ public class AsaWindow extends JPanel {
         //评论按钮
         JButton reviewBtn = new JButton("评论");
         reviewBtn.addActionListener(new ReviewBtnListener());
+
         panel.add(confirmBtn);
         panel.add(clearBtn);
         panel.add(exportBtn);
@@ -104,6 +107,8 @@ public class AsaWindow extends JPanel {
                     appendText(product.toString());
                 } catch (IOException e1) {
                     textArea.append("网址错误");
+                } catch (RegexNotMatchException e1) {
+                    e1.printStackTrace();
                 }
             }
         }
@@ -133,7 +138,7 @@ public class AsaWindow extends JPanel {
 ////            product.setQaNum(10000);
 //            list.add(product);
 //            exportService.makeWorkBook("产品分析表格",cellNames,list);
-            exportService.makeWorkBook("backpack2",cellNames,products);
+            exportService.makeWorkBook("AmzSaleAnalyzer",cellNames,products);
         }
     }
 

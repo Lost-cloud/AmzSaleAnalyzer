@@ -15,7 +15,7 @@ public class RegexTool {
         if(matcher.find()){
             return matcher.group(groupNum);
         }else {
-            throw new RegexNotMatchException("Pattern not matched in " + input);
+            throw new RegexNotMatchException("Pattern not matched");
         }
     }
 
@@ -29,7 +29,7 @@ public class RegexTool {
             for (int i = 0; i <=count; i++) {
                 groups[i] = matcher.group(i);
             }
-        } else throw new RegexNotMatchException("Pattern not matched in " + input);
+        } else throw new RegexNotMatchException("Pattern not matched");
         return groups;
     }
 

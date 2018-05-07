@@ -20,6 +20,8 @@ public class ProductFactory {
     private static Product product;
     public static Product createProduct(String link) throws RegexNotMatchException {
 
+        LogTool.getLog().info("createProduct() : "+link);
+
         init(link);
 
         //设置链接
@@ -88,7 +90,11 @@ public class ProductFactory {
 
     private static void setPrice() {
         //产品价格
-        product.setPrice(document.getElementById("priceblock_ourprice").text());
+        Element element;
+        element = document.getElementById("priceblock_ourprice");
+        if (element != null) {
+            product.setPrice(element.text());
+        }else product.setPrice("Not found");
     }
 
     private static void setBrand() {
@@ -122,7 +128,7 @@ public class ProductFactory {
     private static void setReviews() throws RegexNotMatchException {
         //抓取评论
         String customerReviewUrl ="https://www.amazon.com"+ RegexTool.getInfo("href=[\"{0,1}](\\S*)[\"{0,1}]>See all ", allHtmlText,1);
-//        LogTool.getLog().info(customerReviewUrl);
+        LogTool.getLog().info("setReviews() : "+customerReviewUrl);
         product.setReviews(getReviews(customerReviewUrl));
     }
 
@@ -134,7 +140,6 @@ public class ProductFactory {
         if (product.getSeller().equals("Unknown")){
             setSellerType(UNKNOWN);
         }else {
-            LogTool.getLog().info(product.getLink());
             try {
                 sellerNumText = RegexTool.getInfo("[nN]ew</b> \\S(\\d)", allHtmlText, 1);
                 setSellerType(Integer.parseInt(sellerNumText));
@@ -143,7 +148,7 @@ public class ProductFactory {
                 e.printStackTrace();
             }
         }
-    }
+}
 
     private static void setSellerType(int sellerNum) {
         //抓取不到卖家数时，设置为unknown
@@ -168,7 +173,7 @@ public class ProductFactory {
         //如果售卖信息不存在，或为空
         if (shipsMsg == null||shipsMsg.isEmpty()) {
             product.setSeller("Unknown");
-            LogTool.getLog().warn("The shipsMsg == null");
+            LogTool.getLog().warn("setSellerInfo() : The shipsMsg == null");
             return;
         }
 
