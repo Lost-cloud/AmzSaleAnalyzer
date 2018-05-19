@@ -15,4 +15,16 @@ public class SellerTypeTest {
         String reviewNumText = RegexTool.getInfo("(\\S+) customer", test, 1).replaceAll(",","");
         System.out.println(reviewNumText);
     }
+
+    @Test
+    public void getSellerType() {
+        String test = "new</b> (1433) ";
+        try {
+            String sellerNumText = RegexTool.getInfo("[nN]ew</b> \\S(\\d+)", test, 1);
+            System.out.println(sellerNumText);
+        } catch (RegexNotMatchException e) {
+            e.printStackTrace();
+        }
+
+    }
 }

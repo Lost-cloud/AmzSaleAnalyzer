@@ -12,11 +12,8 @@ public class Product implements Serializable{
     private int qaNum;
     private String link;
     private SellerType sellerType;
-
     private Integer reviewNum;
-
     private String rankInfo;
-
     private float rate;
     private ArrayList<String> reviews;
     private ArrayList<String> features;
@@ -25,7 +22,7 @@ public class Product implements Serializable{
     public String toString() {
         return "Brand : "+brand+
                 "\nproductTitle : "+productTitle +
-                "\nsale by "+seller+" and Seller type is "+sellerType.name()+
+                "\nsold by "+seller+" and Seller type is "+sellerType.name()+
                 "\nFBA :"+ifFBA+
                 "\nprice : "+price+
                 "\nRank : "+rankInfo+

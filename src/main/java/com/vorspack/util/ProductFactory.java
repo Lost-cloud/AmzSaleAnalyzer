@@ -90,10 +90,9 @@ public class ProductFactory {
 
     private static void setPrice() {
         //产品价格
-        Element element;
-        element = document.getElementById("priceblock_ourprice");
-        if (element != null) {
-            product.setPrice(element.text());
+        Element price = document.getElementById("priceblock_ourprice");
+        if (price != null) {
+            product.setPrice(price.text());
         }else product.setPrice("Not found");
     }
 
@@ -111,16 +110,28 @@ public class ProductFactory {
         product.setProductTitle(document.getElementById("productTitle").text());
     }
 
+    //Todo 修改document.getElementById防止出现null point exception
     private static void setRate() throws RegexNotMatchException {
         //评分：4.0 out of 5 star
-        String rate = document.getElementById("acrPopover").attr("title");
-        product.setRate(Float.parseFloat(RegexTool.getInfo("\\d.\\d",rate)));
+        Element acrPopover= getElementById("acrPopover");
+        String rate =null;
+        if(acrPopover!=null)rate=acrPopover.attr("title");
+        if (rate!=null){
+            product.setRate(Float.parseFloat(RegexTool.getInfo("\\d.\\d",rate)));
+        }else product.setRate(-1f);
+    }
+
+    private static Element getElementById(String id) {
+        return document.getElementById(id);
     }
 
     private static void setReviewNum() throws RegexNotMatchException {
         //评论数：201 customer reviews
-        String input=document.getElementById("acrCustomerReviewText").text();
-        String reviewNumText = RegexTool.getInfo("(\\S+) customer", input, 1).replaceAll(",","");
+        Element acrCustomerReviewText=getElementById("acrCustomerReviewText");
+        String input=null;
+        if(acrCustomerReviewText!=null)input= acrCustomerReviewText.text();
+        String reviewNumText="-1";
+        if(input!=null) reviewNumText = RegexTool.getInfo("(\\S+) customer", input, 1).replaceAll(",","");
         int reviewNum = Integer.parseInt(reviewNumText);
         product.setReviewNum(reviewNum);
     }
@@ -141,7 +152,7 @@ public class ProductFactory {
             setSellerType(UNKNOWN);
         }else {
             try {
-                sellerNumText = RegexTool.getInfo("[nN]ew</b> \\S(\\d)", allHtmlText, 1);
+                sellerNumText = RegexTool.getInfo("[nN]ew</b> \\S(\\d+)", allHtmlText, 1);
                 setSellerType(Integer.parseInt(sellerNumText));
             } catch (RegexNotMatchException e) {
                 setSellerType(UNKNOWN);

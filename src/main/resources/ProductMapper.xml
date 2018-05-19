@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.vorspack.repository.ProductRepository">
+    <resultMap id="map" type="com.vorspack.domain.Product">
+        <result property="brand" column="brand"/>
+        <result property="productTitle" column="product_title"/>
+    </resultMap>
+
+    <!--<select id="getRedPacket" parameterType="long" resultMap="map">-->
+        <!--SELECT * FROM t_red_packet WHERE id=#{id}-->
+    <!--</select>-->
+    <insert id="insertProduct" parameterType="product" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO PRODUCT_TABLE (BRAND, PRODUCT_TITLE) VALUES (#{brand}, #{productTitle});
+    </insert>
+</mapper>

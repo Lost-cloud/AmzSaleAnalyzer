@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+	<properties resource="database-config.properties"/>
+
+	<settings>
+		<setting name="lazyLoadingEnabled"  value="true"/>
+		<setting name="aggressiveLazyLoading" value="false"/>
+	</settings>
+
+	<typeAliases ><!-- 别名 -->
+		<!--<typeAlias alias="sexEnum" type="com.king.enums.SexEnum" />-->
+		<!--<package name="com.king.domain"/>-->
+		<package name="com.vorspack.domain"/>
+	</typeAliases>
+	
+	<typeHandlers>
+
+		<!-- 在这里写下对应类型不是好的方式，因为可能存在类型错误，最好的方式是使用 ：package name=“”指定一个包扫描 
+				然后使用@MappedTypes和@MappedJdbcTypes注解处理类
+		<typeHandler handler="com.king.test.SexEnumTypeHandler"  jdbcType="INTEGER"  javaType="sexEnum"/>
+		-->	
+		
+		<!-- 更好的方法：扫描包 -->
+		<!--<package name="com.king.mybatisHandler"/>-->
+	</typeHandlers>
+
+	<!-- 数据库环境 -->
+	<!--<environments default="development">-->
+		<!--<environment id="development">-->
+			<!--<transactionManager type="JDBC"/>-->
+				<!--<dataSource type="POOLED">-->
+				<!--&lt;!&ndash; 硬编码方式-->
+					<!--<property name="driver"  value="com.mysql.cj.jdbc.Driver"/>-->
+					<!--<property name="URL"  value="jdbc:mysql://LocalHost:3306/spring_test?useSSL=true&amp;serverTimeZone=UTC "/>-->
+					<!--<property name="userName"  value="root"/>-->
+					<!--<property name="password"   value="king123"/>-->
+				 <!--&ndash;&gt;-->
+				 <!--&lt;!&ndash; 导入jdbc.properties文件中的属性 &ndash;&gt;-->
+					<!--<property name="driver"  value="${database.driver}"/>-->
+					<!--<property name="url"  value="${database.url}"/>-->
+					<!--<property name="username"  value="${database.username}"/>-->
+					<!--<property name="password"   value="${database.password}"/>-->
+				<!--</dataSource>-->
+		<!--</environment>-->
+	<!--</environments>-->
+	
+	<mappers>
+		<!--<mapper resource="mybatis/employeeMapper.xml"/>-->
+		<!--<mapper resource="mybatis/RedPacketMapper.xml"/>-->
+		<!--<mapper resource="mybatis/UserRedPacketMapper.xml"/>-->
+		<mapper resource="ProductMapper.xml"/>
+	</mappers>
+	
+</configuration>
