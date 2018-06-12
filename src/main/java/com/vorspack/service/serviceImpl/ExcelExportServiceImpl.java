@@ -54,7 +54,7 @@ public class ExcelExportServiceImpl implements ExcelExportService {
         }
 
         try {
-            FileOutputStream fos = new FileOutputStream("E://Hai//Excel//"+bookTitle+".xls");
+            FileOutputStream fos = new FileOutputStream("E://"+bookTitle+".xls");
             hwb.write(fos);
             fos.close();
             JOptionPane.showMessageDialog(null,"导出成功");

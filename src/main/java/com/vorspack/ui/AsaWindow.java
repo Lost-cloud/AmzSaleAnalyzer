@@ -1,7 +1,7 @@
 package com.vorspack.ui;
 
+import com.vorspack.comparator.ProductComparator;
 import com.vorspack.domain.Product;
-import com.vorspack.exception.RegexNotMatchException;
 import com.vorspack.network.Html;
 import com.vorspack.service.ExcelExportService;
 import com.vorspack.service.LinkListService;
@@ -38,6 +38,9 @@ public class AsaWindow extends JPanel {
 
     @Autowired
     private ProductListService productListService;
+
+    @Autowired
+    private ProductComparator productComparator;
     private List<Product> products;
 
 
@@ -107,8 +110,6 @@ public class AsaWindow extends JPanel {
                     appendText(product.toString());
                 } catch (IOException e1) {
                     textArea.append("网址错误");
-                } catch (RegexNotMatchException e1) {
-                    e1.printStackTrace();
                 }
             }
         }
@@ -152,7 +153,11 @@ public class AsaWindow extends JPanel {
                 List<String> links = linkListService.createLinkList(url);
                 links.forEach(it -> LogTool.getLog().info(it));
                 products = productListService.createProductList(links);
-                products.forEach(it->appendText(it.toString()));
+            }
+//            products.forEach(it->appendText(it.toString()));
+            products.sort(productComparator);
+            for (Product product:products) {
+                appendText(product.toString());
             }
         }
     }

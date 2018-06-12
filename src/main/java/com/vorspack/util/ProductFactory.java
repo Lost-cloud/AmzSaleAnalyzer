@@ -14,11 +14,11 @@ import java.io.IOException;
 import java.util.List;
 
 public class ProductFactory {
-    public static final int UNKNOWN = 0;
+    private static final int UNKNOWN = 0;
     private static Document document;
     private static String allHtmlText;
     private static Product product;
-    public static Product createProduct(String link) throws RegexNotMatchException {
+    public static Product createProduct(String link)  {
 
         LogTool.getLog().info("createProduct() : "+link);
 
@@ -36,7 +36,7 @@ public class ProductFactory {
         //设置价格
         setPrice();
 
-        //设置卖家信息
+        //设置卖家信息，营业类型
         setSellerInfo();
 
         //设置卖家类型
@@ -52,7 +52,7 @@ public class ProductFactory {
         setReviewNum();
 
         //设置review
-        setReviews();
+//        setReviews();
 
         //设置QA数量
         setQANum();
@@ -111,36 +111,50 @@ public class ProductFactory {
     }
 
     //Todo 修改document.getElementById防止出现null point exception
-    private static void setRate() throws RegexNotMatchException {
+    private static void setRate(){
         //评分：4.0 out of 5 star
         Element acrPopover= getElementById("acrPopover");
         String rate =null;
         if(acrPopover!=null)rate=acrPopover.attr("title");
-        if (rate!=null){
-            product.setRate(Float.parseFloat(RegexTool.getInfo("\\d.\\d",rate)));
-        }else product.setRate(-1f);
+        try {
+            if (rate!=null){
+                product.setRate(Float.parseFloat(RegexTool.getInfo("\\d.\\d",rate)));
+            }else product.setRate(-1f);
+        } catch (RegexNotMatchException e) {
+            product.setRate(-1f);
+        }
     }
 
     private static Element getElementById(String id) {
         return document.getElementById(id);
     }
 
-    private static void setReviewNum() throws RegexNotMatchException {
+    private static void setReviewNum(){
         //评论数：201 customer reviews
         Element acrCustomerReviewText=getElementById("acrCustomerReviewText");
         String input=null;
         if(acrCustomerReviewText!=null)input= acrCustomerReviewText.text();
-        String reviewNumText="-1";
-        if(input!=null) reviewNumText = RegexTool.getInfo("(\\S+) customer", input, 1).replaceAll(",","");
-        int reviewNum = Integer.parseInt(reviewNumText);
-        product.setReviewNum(reviewNum);
+        String reviewNumText;
+        if(input!=null) {
+            try {
+                reviewNumText = RegexTool.getInfo("(\\S+) customer", input, 1).replaceAll(",","");
+                product.setReviewNum(Integer.parseInt(reviewNumText));
+            } catch (RegexNotMatchException e) {
+                product.setReviewNum(-1);
+            }
+        }
     }
 
-    private static void setReviews() throws RegexNotMatchException {
+    private static void setReviews(){
         //抓取评论
-        String customerReviewUrl ="https://www.amazon.com"+ RegexTool.getInfo("href=[\"{0,1}](\\S*)[\"{0,1}]>See all ", allHtmlText,1);
-        LogTool.getLog().info("setReviews() : "+customerReviewUrl);
-        product.setReviews(getReviews(customerReviewUrl));
+        String customerReviewUrl;
+        try {
+            customerReviewUrl = "https://www.amazon.com"+ RegexTool.getInfo("href=[\"{0,1}](\\S*)[\"{0,1}]>See all ", allHtmlText,1);
+            LogTool.getLog().info("setReviews() : "+customerReviewUrl);
+            product.setReviews(getReviews(customerReviewUrl));
+        } catch (RegexNotMatchException e) {
+            product.setReviews(null);
+        }
     }
 
     private static void setSellerType() {
@@ -177,11 +191,11 @@ public class ProductFactory {
         }else {product.setSellerType(SellerType.OTHER_SELLER);}
     }
 
-    private static void setSellerInfo() throws RegexNotMatchException {
-
+    private static void setSellerInfo(){
         //售卖信息抓取
         String shipsMsg = document.getElementById("shipsFromSoldBy_feature_div").text();
-        //如果售卖信息不存在，或为空
+
+        //如果售卖信息不存在，或为空，则设置卖家类型为Unknown并返回
         if (shipsMsg == null||shipsMsg.isEmpty()) {
             product.setSeller("Unknown");
             LogTool.getLog().warn("setSellerInfo() : The shipsMsg == null");
@@ -190,22 +204,25 @@ public class ProductFactory {
 
         //如果品牌为AmazonBasics，设置卖家为Amazon.com
         if (product.getBrand().equals("AmazonBasics")) {
-            product.setSeller("Amazon.com");
+            product.setSeller("amazon.com");
             product.setIfFBA(true);
             return;
         }
 
         //获取Sold By后的卖家
-        String shipMsgFiltered= RegexTool.getInfo("([sS]old by) ([\\w+\\s*]*)", shipsMsg,2);
-
+        String shipMsgFiltered;
         //卖家
-        String seller = "";
-
-        if(shipMsgFiltered.contains("Fulfilled by Amazon")){
-            product.setIfFBA(true);
-            seller = RegexTool.getInfo("([\\w+\\s*]*)and", shipMsgFiltered, 1);
-        }else {
-            seller = shipMsgFiltered;
+        String seller;
+        try {
+            shipMsgFiltered = RegexTool.getInfo("([sS]old by) ([\\w+\\s*]*)", shipsMsg,2);
+            if(shipMsgFiltered.contains("Fulfilled by Amazon")){
+                product.setIfFBA(true);
+                seller = RegexTool.getInfo("([\\w+\\s*]*)and", shipMsgFiltered, 1);
+            }else {
+                seller = shipMsgFiltered;
+            }
+        } catch (RegexNotMatchException e) {
+            seller = "Unknown";
         }
         product.setSeller(seller);
     }

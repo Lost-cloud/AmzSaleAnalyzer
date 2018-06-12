@@ -14,12 +14,6 @@ import java.io.IOException;
 public class ProductServiceImpl implements ProductService {
     @Override
     public Product createProduct(String link) {
-        Product product=null;
-        try {
-            product = ProductFactory.createProduct(link);
-        } catch (RegexNotMatchException e) {
-            e.printStackTrace();
-        }
-        return product;
+        return ProductFactory.createProduct(link);
     }
 }

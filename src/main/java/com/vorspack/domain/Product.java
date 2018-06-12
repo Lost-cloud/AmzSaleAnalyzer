@@ -1,22 +1,39 @@
 package com.vorspack.domain;
 
+import com.vorspack.exception.RegexNotMatchException;
+import com.vorspack.util.RegexTool;
+
+import java.io.BufferedInputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 
 public class Product implements Serializable{
+    //品牌
     private String brand;
+    //产品标题
     private String productTitle;
+    //卖家
     private String seller;
+    //价格
     private String price;
+    //是否FBA
     private boolean ifFBA;
+    //QA数量
     private int qaNum;
+    //链接
     private String link;
+    //卖家信息
     private SellerType sellerType;
-    private Integer reviewNum;
+    //评论数量
+    private int reviewNum;
+    //排名信息
     private String rankInfo;
+    //星级
     private float rate;
+    //评论
     private ArrayList<String> reviews;
-    private ArrayList<String> features;
+    //首图
+    private BufferedInputStream image;
 
     @Override
     public String toString() {
@@ -30,15 +47,6 @@ public class Product implements Serializable{
                 "\nReview : "+reviewNum;
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        Product prod;
-        if(obj instanceof Product) {
-            prod= (Product) obj;
-            return this.reviewNum.equals(prod.reviewNum);
-        }
-        return false;
-    }
     public int getQaNum() {
         return qaNum;
     }
@@ -135,11 +143,4 @@ public class Product implements Serializable{
         this.reviews = reviews;
     }
 
-    public ArrayList<String> getFeatures() {
-        return features;
-    }
-
-    public void setFeatures(ArrayList<String> features) {
-        this.features = features;
-    }
 }
