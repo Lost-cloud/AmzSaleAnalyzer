@@ -80,7 +80,7 @@ public class ExcelExportServiceImpl implements ExcelExportService {
                 cellValues[3] = "否";
             }
 
-            if (product.getSeller().equals("Amazon.com")) {
+            if (product.getSeller().equals("amazon.com")) {
                 cellValues[4] = "是";
             }else  cellValues[4] = "否";
 

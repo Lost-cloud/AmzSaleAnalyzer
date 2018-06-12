@@ -36,4 +36,21 @@ public class RegexToolTest {
         String customerReviewUrl = RegexTool.getInfo("href=[\"{0,1}](\\S*)[\"{0,1}]>See all " + 14 + " reviews", input, 1);
         System.out.println("https://www.amazon.com"+customerReviewUrl);
     }
+
+    @Test
+    public void testGetShipMessage() {
+        String input = "Sold by \n" +
+                "                    <a href=\"/gp/help/seller/at-a-glance.html/ref=dp_merchant_link?ie=UTF8&amp;seller=A1VLG17X286KN7&amp;isAmazonFulfilled=1\">SPD & GROUP</a> and \n" +
+                "                    <a href=\"/gp/help/customer/display.html?ie=UTF8&amp;ref=dp_fulfillment&amp;nodeId=106096011\" id=\"SSOFpopoverLink\">Fulfilled by Amazon</a>. \n" +
+                "                    <span class=\"\"> Gift-wrap available. </span> ";
+        try {
+            String shipMessage = RegexTool.getInfo("[sS]old by [\\s\\S\\w]* Gift-wrap available", input);
+            LogTool.getLog().warn(shipMessage);
+            String seller = RegexTool.getInfo(">([\\s\\w^<]*)<", shipMessage,1);
+            LogTool.getLog().warn(seller);
+
+        } catch (RegexNotMatchException e) {
+            e.printStackTrace();
+        }
+    }
 }
