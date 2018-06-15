@@ -11,10 +11,12 @@ import com.vorspack.util.ProductFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -47,10 +49,12 @@ public class AsaWindow extends JPanel {
     public AsaWindow() {
         //主界面布局
         setLayout(new BorderLayout());
-        //创建并初始化panel
+        //创建并初始化按钮panel
         JPanel panel = new JPanel();
         panel.add(createLabel());
         panel.add(textField);
+
+        JLabel label = createImage();
 
         //确认按钮
         JButton confirmBtn = new JButton("确认");
@@ -75,6 +79,23 @@ public class AsaWindow extends JPanel {
         panel.add(reviewBtn);
         add(panel, BorderLayout.NORTH);
         add(createScrollPane(), BorderLayout.CENTER);
+//        add(label, BorderLayout.CENTER);
+    }
+
+    private JLabel createImage() {
+        Image image = null;
+        Image smallImg=null;
+        int height,originWidth=400;
+        try {
+            image = ImageIO.read(new File("E:\\down.jpeg"));
+            height = image.getHeight(null) * originWidth / image.getWidth(null);
+            smallImg = image.getScaledInstance(originWidth, height,Image.SCALE_SMOOTH);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        assert smallImg != null;
+        ImageIcon imageIcon=new ImageIcon(smallImg);
+        return new JLabel(imageIcon,JLabel.CENTER);
     }
 
     private JScrollPane createScrollPane() {
