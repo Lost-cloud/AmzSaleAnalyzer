@@ -1,13 +1,11 @@
 package com.vorspack.domain;
 
-import com.vorspack.exception.RegexNotMatchException;
-import com.vorspack.util.RegexTool;
-
-import java.io.BufferedInputStream;
+import java.awt.*;
 import java.io.Serializable;
-import java.util.ArrayList;
 
 public class Product implements Serializable{
+
+    private String asin;
     //品牌
     private String brand;
     //产品标题
@@ -16,24 +14,35 @@ public class Product implements Serializable{
     private String seller;
     //价格
     private String price;
-    //是否FBA
-    private boolean ifFBA;
-    //QA数量
-    private int qaNum;
     //链接
     private String link;
-    //卖家信息
-    private SellerType sellerType;
-    //评论数量
-    private int reviewNum;
     //排名信息
     private String rankInfo;
+    //是否FBA
+    private boolean ifFBA;
+    //评论的链接
+    private  String reviewUrl;
+    //QA数量
+    private int qaNum;
+    //评论数量
+    private int reviewNum;
+    //变体数量
+    private  int  variantNum;
     //星级
     private float rate;
-    //评论
-    private ArrayList<String> reviews;
+    //卖家类型
+    private SellerType sellerType;
+
     //首图
-    private BufferedInputStream image;
+    private Image image;
+
+    public Image getImage() {
+        return image;
+    }
+
+    public void setImage(Image image) {
+        this.image = image;
+    }
 
     @Override
     public String toString() {
@@ -135,12 +144,27 @@ public class Product implements Serializable{
         this.rate = rate;
     }
 
-    public ArrayList<String> getReviews() {
-        return reviews;
+    public String getAsin() {
+        return asin;
     }
 
-    public void setReviews(ArrayList<String> reviews) {
-        this.reviews = reviews;
+    public void setAsin(String asin) {
+        this.asin = asin;
     }
 
+    public int getVariantNum() {
+        return variantNum;
+    }
+
+    public void setVariantNum(int variantNum) {
+        this.variantNum = variantNum;
+    }
+
+    public String getReviewUrl() {
+        return reviewUrl;
+    }
+
+    public void setReviewUrl(String reviewUrl) {
+        this.reviewUrl = reviewUrl;
+    }
 }

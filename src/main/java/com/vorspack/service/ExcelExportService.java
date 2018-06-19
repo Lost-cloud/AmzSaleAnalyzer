@@ -11,4 +11,5 @@ public interface ExcelExportService {
      * @param productList 产品列表
      */
     void makeWorkBook(String bookTitle, String[] cellNames, List<Product> productList);
+    void makeWorkBook(String path,String bookTitle, String[] cellNames, List<Product> productList);
 }

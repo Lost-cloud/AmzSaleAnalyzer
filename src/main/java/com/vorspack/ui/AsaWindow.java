@@ -6,8 +6,8 @@ import com.vorspack.network.Html;
 import com.vorspack.service.ExcelExportService;
 import com.vorspack.service.LinkListService;
 import com.vorspack.service.ProductListService;
+import com.vorspack.service.ProductService;
 import com.vorspack.util.LogTool;
-import com.vorspack.util.ProductFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -27,7 +27,7 @@ public class AsaWindow extends JPanel {
     private JTextField textField = new JTextField(20);
     private JTextArea textArea = new JTextArea();
     private Product product;
-    private String[] cellNames={"链接","品牌","卖家","FBA","自营","评分","上架时间","review数量","价格","类目排名","销量","QA数量"};
+    private String[] cellNames = {"图片","Asin","产品名","链接", "品牌", "卖家","卖家类型", "FBA", "自营", "评分", "上架时间", "review数量", "价格", "类目排名", "销量", "QA数量","变体数量","净利润"};
 
     @Autowired
     private Html html;
@@ -42,7 +42,11 @@ public class AsaWindow extends JPanel {
     private ProductListService productListService;
 
     @Autowired
+    private ProductService productService;
+
+    @Autowired
     private ProductComparator productComparator;
+
     private List<Product> products;
 
 
@@ -54,7 +58,7 @@ public class AsaWindow extends JPanel {
         panel.add(createLabel());
         panel.add(textField);
 
-        JLabel label = createImage();
+//        JLabel label = createImage();
 
         //确认按钮
         JButton confirmBtn = new JButton("确认");
@@ -84,18 +88,18 @@ public class AsaWindow extends JPanel {
 
     private JLabel createImage() {
         Image image = null;
-        Image smallImg=null;
-        int height,originWidth=400;
+        Image smallImg = null;
+        int height, originWidth = 400;
         try {
             image = ImageIO.read(new File("E:\\down.jpeg"));
             height = image.getHeight(null) * originWidth / image.getWidth(null);
-            smallImg = image.getScaledInstance(originWidth, height,Image.SCALE_SMOOTH);
+            smallImg = image.getScaledInstance(originWidth, height, Image.SCALE_SMOOTH);
         } catch (IOException e) {
             e.printStackTrace();
         }
         assert smallImg != null;
-        ImageIcon imageIcon=new ImageIcon(smallImg);
-        return new JLabel(imageIcon,JLabel.CENTER);
+        ImageIcon imageIcon = new ImageIcon(smallImg);
+        return new JLabel(imageIcon, JLabel.CENTER);
     }
 
     private JScrollPane createScrollPane() {
@@ -108,13 +112,13 @@ public class AsaWindow extends JPanel {
 
     private JLabel createLabel() {
         Font font = new Font("Helvetica", Font.PLAIN, 20);
-        JLabel label=new JLabel("网址");
+        JLabel label = new JLabel("网址");
         label.setFont(font);
         return label;
     }
 
     private void appendText(String text) {
-        textArea.append(text+"\n");
+        textArea.append(text + "\n");
     }
 
     private class ConfirmBtnListener implements ActionListener {
@@ -127,7 +131,7 @@ public class AsaWindow extends JPanel {
                 try {
                     org.jsoup.nodes.Document document = html.getHtmlDocument(url);
                     appendText(document.html());
-                    product = ProductFactory.createProduct(url);
+                    product = productService.createProduct(url);
                     appendText(product.toString());
                 } catch (IOException e1) {
                     textArea.append("网址错误");
@@ -147,9 +151,9 @@ public class AsaWindow extends JPanel {
         @Override
         public void actionPerformed(ActionEvent e) {
             textArea.setText("");
-            ArrayList<String> reviews = product.getReviews();
-            LogTool.getLog().info("Empty "+reviews.isEmpty());
-            reviews.forEach(it->textArea.append(it+"\n"));
+//            ArrayList<String> reviews = product.getReviews();
+//            LogTool.getLog().info("Empty " + reviews.isEmpty());
+//            reviews.forEach(it -> textArea.append(it + "\n"));
         }
     }
 
@@ -160,7 +164,10 @@ public class AsaWindow extends JPanel {
 ////            product.setQaNum(10000);
 //            list.add(product);
 //            exportService.makeWorkBook("产品分析表格",cellNames,list);
-            exportService.makeWorkBook("AmzSaleAnalyzer",cellNames,products);
+            if (products == null) {
+                return;
+            }
+            exportService.makeWorkBook("AmzSaleAnalyzer", cellNames, products);
         }
     }
 
@@ -170,16 +177,14 @@ public class AsaWindow extends JPanel {
             String url = textField.getText();
             if (url.isEmpty()) {
                 textArea.append("请输入网址\n");
+                return;
             } else {
                 List<String> links = linkListService.createLinkList(url);
                 links.forEach(it -> LogTool.getLog().info(it));
                 products = productListService.createProductList(links);
             }
-//            products.forEach(it->appendText(it.toString()));
             products.sort(productComparator);
-            for (Product product:products) {
-                appendText(product.toString());
-            }
+            products.forEach(it->appendText(it.toString()));
         }
     }
 }

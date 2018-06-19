@@ -45,11 +45,17 @@ public class FileServiceImpl implements FileService {
     public InputStream getFileStream(String downloadPath) {
         InputStream in=null;
         try {
-            URL imageUrl=new URL(downloadPath);
-            URLConnection connection = imageUrl.openConnection();
-            connection.setConnectTimeout(5000);
-            connection.setReadTimeout(5000);
-            in = connection.getInputStream();
+            //如果是web链接
+            if (downloadPath.contains("http")) {
+                URL imageUrl = new URL(downloadPath);
+                URLConnection connection = imageUrl.openConnection();
+                connection.setReadTimeout(5000);
+                connection.setConnectTimeout(5000);
+                in = connection.getInputStream();
+            }else{
+                //如果是本地文件
+                in = new FileInputStream(downloadPath);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
