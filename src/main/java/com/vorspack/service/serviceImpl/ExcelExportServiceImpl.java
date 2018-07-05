@@ -97,7 +97,7 @@ public class ExcelExportServiceImpl implements ExcelExportService {
     private void addImageToCell(int rowNum, int columnNum, Object[] productInfo) {
 
         HSSFPatriarch patriarch = sheet.createDrawingPatriarch();
-        HSSFClientAnchor anchor= new HSSFClientAnchor(0,0,0,0
+        HSSFClientAnchor anchor= new HSSFClientAnchor(0,0,2,2
                         ,(short) columnNum,rowNum, (short) (columnNum+1),rowNum+1);
 
         BufferedImage bufferImg;

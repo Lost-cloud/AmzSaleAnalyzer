@@ -93,7 +93,7 @@ public class ProductServiceImpl implements ProductService {
         if (imgUrl == null) {
             // TODO: 2018/6/18 设置默认图片
             product.setImage(imageService.createImage(""));
-        } else product.setImage(imageService.createImage(""));
+        } else product.setImage(imageService.createImage(imgUrl));
     }
 
     private void setProductAsin() {
@@ -158,12 +158,17 @@ public class ProductServiceImpl implements ProductService {
      */
     private void setBrand() {
         //产品品牌
-        Element brand = document.getElementById("brand");
-        if (brand == null) {
-            brand = document.getElementById("bylineInfo");
-            product.setBrand(brand.text());
+        Element brand_1 = document.getElementById("brand");
+        Element brand_2;
+        if (brand_1 == null) {
+            brand_2 = document.getElementById("bylineInfo");
+            if (brand_2 == null) {
+                product.setBrand("Not Found");
+                return;
+            }
+            product.setBrand(brand_2.text());
         } else {
-            product.setBrand(brand.text());
+            product.setBrand(brand_1.text());
         }
     }
 

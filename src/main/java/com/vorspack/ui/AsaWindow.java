@@ -26,6 +26,9 @@ public class AsaWindow extends JPanel {
 
     private JTextField textField = new JTextField(20);
     private JTextArea textArea = new JTextArea();
+    private JTextField excelName=new JTextField(10);
+    private JTextField excelDest=new JTextField("E:\\Hai\\Excel文件\\抓取数据");
+
     private Product product;
     private String[] cellNames = {"图片","Asin","产品名","链接", "品牌", "卖家","卖家类型", "FBA", "自营", "评分", "上架时间", "review数量", "价格", "类目排名", "销量", "QA数量","变体数量","净利润"};
 
@@ -57,7 +60,8 @@ public class AsaWindow extends JPanel {
         JPanel panel = new JPanel();
         panel.add(createLabel());
         panel.add(textField);
-
+        panel.add(excelDest);
+        panel.add(excelName);
 //        JLabel label = createImage();
 
         //确认按钮
@@ -167,7 +171,12 @@ public class AsaWindow extends JPanel {
             if (products == null) {
                 return;
             }
-            exportService.makeWorkBook("AmzSaleAnalyzer", cellNames, products);
+            excelExport();
+        }
+
+        private void excelExport() {
+            if (excelName.getText().isEmpty() || excelDest.getText().isEmpty()) return;
+            exportService.makeWorkBook(excelDest.getText(),excelName.getText(),cellNames,products);
         }
     }
 
