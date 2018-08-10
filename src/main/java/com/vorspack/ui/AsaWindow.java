@@ -9,6 +9,7 @@ import com.vorspack.service.ProductListService;
 import com.vorspack.service.ProductService;
 import com.vorspack.util.LogTool;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import javax.imageio.ImageIO;
@@ -18,7 +19,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -28,7 +28,7 @@ public class AsaWindow extends JPanel {
     private JTextArea textArea = new JTextArea();
     private JTextField excelName=new JTextField(10);
     private JTextField excelDest=new JTextField("E:\\Hai\\Excel文件\\抓取数据");
-
+    private JCheckBox bsCheckBox =new JCheckBox("Best Seller Page");
     private Product product;
     private String[] cellNames = {"图片","Asin","产品名","链接", "品牌", "卖家","卖家类型", "FBA", "自营", "评分", "上架时间", "review数量", "价格", "类目排名", "销量", "QA数量","变体数量","净利润"};
 
@@ -39,9 +39,11 @@ public class AsaWindow extends JPanel {
     private ExcelExportService exportService;
 
     @Autowired
+    @Qualifier("BestSellerPageLls")
     private LinkListService linkListService;
 
     @Autowired
+    @Qualifier("BastSellerPagePls")
     private ProductListService productListService;
 
     @Autowired
@@ -60,6 +62,8 @@ public class AsaWindow extends JPanel {
         JPanel panel = new JPanel();
         panel.add(createLabel());
         panel.add(textField);
+        panel.add(bsCheckBox);
+
         panel.add(excelDest);
         panel.add(excelName);
 //        JLabel label = createImage();
