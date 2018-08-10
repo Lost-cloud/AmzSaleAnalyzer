@@ -2,7 +2,6 @@ package com.vorspack.service.serviceImpl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vorspack.network.Html;
-import com.vorspack.service.FileService;
 import com.vorspack.service.ImageService;
 import com.vorspack.util.LogTool;
 import org.jsoup.nodes.Document;
@@ -13,15 +12,11 @@ import org.springframework.stereotype.Service;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.Set;
 
 @Service
 public class ImageServiceImpl implements ImageService {
@@ -37,7 +32,7 @@ public class ImageServiceImpl implements ImageService {
         Document document;
         Element imgDiv = null;
         try {
-            document = html.getHtmlDocument(productLink);
+            document = html.getDocument(productLink);
             //图片的id
             imgDiv = document.getElementById(LANDING_IMAGE);
         } catch (IOException e) {
@@ -47,6 +42,11 @@ public class ImageServiceImpl implements ImageService {
         return getFirstImgUrl(imgDiv);
     }
 
+    /**
+     * 获取图片不同分辨率的链接，其为json格式
+     * @param imgDiv  包含不同分辨率的图片链接的html元素
+     * @return 返回第一个分辨率的图片链接
+     */
     @SuppressWarnings("unchecked")
     private String getFirstImgUrl(Element imgDiv) {
         if (imgDiv == null) return null;

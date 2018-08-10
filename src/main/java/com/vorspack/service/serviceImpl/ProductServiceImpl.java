@@ -73,14 +73,14 @@ public class ProductServiceImpl implements ProductService {
         //设置review数量
         setReviewNum();
 
-        //设置review
+        //设置reviewUrl
         setReviewUrl();
 
         //设置QA数量
         setQANum();
 
         //设置Asin
-        setProductAsin();
+        setProductAsin(link);
 
         //设置图片
         setProductImage();
@@ -96,8 +96,16 @@ public class ProductServiceImpl implements ProductService {
         } else product.setImage(imageService.createImage(imgUrl));
     }
 
-    private void setProductAsin() {
-
+    //https://www.amazon.com/Fanny-BuyAgain-Release-Buckle-Travel/+
+    //  +dp/B071Z2GTW7/ref=sr_1_7?ie=UTF8&qid=1533103021&sr=8-7&keywords=waist+pack
+    private void setProductAsin(String link) {
+        String asin="not found";
+        try {
+            asin=RegexTool.getInfo("dp/(\\S+)/ref",link,1);
+        } catch (RegexNotMatchException e) {
+            e.printStackTrace();
+        }
+        product.setAsin(asin);
     }
 
     /**
@@ -107,7 +115,7 @@ public class ProductServiceImpl implements ProductService {
      */
     private void init(String link) {
         try {
-            document = html.getHtmlDocument(link);
+            document = html.getDocument(link);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -129,7 +137,6 @@ public class ProductServiceImpl implements ProductService {
      * 设置QA数量
      */
     private void setQANum() {
-
     }
 
     /**

@@ -35,17 +35,6 @@ public class TestUi {
         for (int i = 0; i < cellNum - 1; i++) {
             for (Object[] objects : createProductValues()) {
 
-
-
-
-
-
-
-
-
-
-
-                
             }
         }
     }

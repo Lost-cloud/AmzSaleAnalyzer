@@ -21,7 +21,7 @@ public class ReviewServiceImpl implements ReviewService {
         Html html = new HtmlImpl();
         List<String> reviews = null;
         try {
-            Document document = html.getHtmlDocument(customerReviewUrl);
+            Document document = html.getDocument(customerReviewUrl);
             Elements reviewElements = document.getElementsByAttributeValue("data-hook", "review-body");
             reviews = reviewElements.eachText();
         } catch (IOException e) {

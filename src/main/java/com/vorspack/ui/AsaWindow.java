@@ -8,6 +8,7 @@ import com.vorspack.service.LinkListService;
 import com.vorspack.service.ProductListService;
 import com.vorspack.service.ProductService;
 import com.vorspack.util.LogTool;
+import com.vorspack.util.ProductBasicInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -18,19 +19,18 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 @Component
 public class AsaWindow extends JPanel {
 
-    private JTextField textField = new JTextField(20);
-    private JTextArea textArea = new JTextArea();
-    private JTextField excelName=new JTextField(10);
-    private JTextField excelDest=new JTextField("E:\\Hai\\Excel文件\\抓取数据");
+    private JTextField urlTf = new JTextField(20);
+    private JTextArea resultTa = new JTextArea();
+    private JTextField excelNameTf =new JTextField(10);
+    private JTextField excelDestTf =new JTextField("E:\\Hai\\Excel文件\\抓取数据");
 
     private Product product;
-    private String[] cellNames = {"图片","Asin","产品名","链接", "品牌", "卖家","卖家类型", "FBA", "自营", "评分", "上架时间", "review数量", "价格", "类目排名", "销量", "QA数量","变体数量","净利润"};
+    private String[] cellNames = {"图片","Asin","产品名","链接", "品牌", "卖家","卖家类型", "FBA", "自营", "评分", "上架时间", "review数量", "价格", "类目排名", "销量","净利润"};
 
     @Autowired
     private Html html;
@@ -56,13 +56,15 @@ public class AsaWindow extends JPanel {
     public AsaWindow() {
         //主界面布局
         setLayout(new BorderLayout());
-        //创建并初始化按钮panel
-        JPanel panel = new JPanel();
-        panel.add(createLabel());
-        panel.add(textField);
-        panel.add(excelDest);
-        panel.add(excelName);
-//        JLabel label = createImage();
+        //创建并初始化顶部的panel
+        JPanel topPanel = new JPanel();
+        topPanel.add(createLabel("网址"));
+        //添加网址的输入文本域
+        topPanel.add(urlTf);
+        //添加excel输出路径文本域
+        topPanel.add(excelDestTf);
+        //添加excel的保存名称
+        topPanel.add(excelNameTf);
 
         //确认按钮
         JButton confirmBtn = new JButton("确认");
@@ -80,14 +82,14 @@ public class AsaWindow extends JPanel {
         JButton reviewBtn = new JButton("评论");
         reviewBtn.addActionListener(new ReviewBtnListener());
 
-        panel.add(confirmBtn);
-        panel.add(clearBtn);
-        panel.add(exportBtn);
-        panel.add(productLinkBtn);
-        panel.add(reviewBtn);
-        add(panel, BorderLayout.NORTH);
-        add(createScrollPane(), BorderLayout.CENTER);
-//        add(label, BorderLayout.CENTER);
+        topPanel.add(confirmBtn);
+        topPanel.add(clearBtn);
+        topPanel.add(exportBtn);
+        topPanel.add(productLinkBtn);
+        topPanel.add(reviewBtn);
+        add(topPanel, BorderLayout.NORTH);
+        add(createScrollPane(resultTa), BorderLayout.CENTER);
+
     }
 
     private JLabel createImage() {
@@ -106,39 +108,40 @@ public class AsaWindow extends JPanel {
         return new JLabel(imageIcon, JLabel.CENTER);
     }
 
-    private JScrollPane createScrollPane() {
-        JScrollPane jScrollPane = new JScrollPane(textArea);
+    private JScrollPane createScrollPane(java.awt.Component view) {
+        JScrollPane jScrollPane = new JScrollPane(view);
         jScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
         jScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         jScrollPane.setAutoscrolls(true);
         return jScrollPane;
     }
 
-    private JLabel createLabel() {
+    private JLabel createLabel(String name) {
         Font font = new Font("Helvetica", Font.PLAIN, 20);
-        JLabel label = new JLabel("网址");
+        JLabel label = new JLabel(name);
         label.setFont(font);
         return label;
     }
 
     private void appendText(String text) {
-        textArea.append(text + "\n");
+        resultTa.append(text + "\n");
     }
 
+    //确定按钮，从单个产品网址获取信息
     private class ConfirmBtnListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            String url = textField.getText();
+            String url = urlTf.getText();
             if (url.isEmpty()) {
-                textArea.append("请输入网址\n");
+                resultTa.append("请输入网址\n");
             } else {
                 try {
-                    org.jsoup.nodes.Document document = html.getHtmlDocument(url);
+                    org.jsoup.nodes.Document document = html.getDocument(url);
                     appendText(document.html());
                     product = productService.createProduct(url);
                     appendText(product.toString());
                 } catch (IOException e1) {
-                    textArea.append("网址错误");
+                    resultTa.append("网址错误");
                 }
             }
         }
@@ -147,27 +150,23 @@ public class AsaWindow extends JPanel {
     private class ClearBtnListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            textArea.setText("");
+            resultTa.setText("");
         }
     }
 
     private class ReviewBtnListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            textArea.setText("");
+            resultTa.setText("");
 //            ArrayList<String> reviews = product.getReviews();
 //            LogTool.getLog().info("Empty " + reviews.isEmpty());
-//            reviews.forEach(it -> textArea.append(it + "\n"));
+//            reviews.forEach(it -> resultTa.append(it + "\n"));
         }
     }
 
     private class ExportBtnListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-//            List<Product> list=new ArrayList<>();
-////            product.setQaNum(10000);
-//            list.add(product);
-//            exportService.makeWorkBook("产品分析表格",cellNames,list);
             if (products == null) {
                 return;
             }
@@ -175,17 +174,17 @@ public class AsaWindow extends JPanel {
         }
 
         private void excelExport() {
-            if (excelName.getText().isEmpty() || excelDest.getText().isEmpty()) return;
-            exportService.makeWorkBook(excelDest.getText(),excelName.getText(),cellNames,products);
+            if (excelNameTf.getText().isEmpty() || excelDestTf.getText().isEmpty()) return;
+            exportService.makeWorkBook(excelDestTf.getText(), excelNameTf.getText(),ProductBasicInfo.getCellNames(),products);
         }
     }
 
     private class ProductLinkBtnListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            String url = textField.getText();
+            String url = urlTf.getText();
             if (url.isEmpty()) {
-                textArea.append("请输入网址\n");
+                resultTa.append("请输入网址\n");
                 return;
             } else {
                 List<String> links = linkListService.createLinkList(url);

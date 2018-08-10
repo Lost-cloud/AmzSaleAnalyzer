@@ -1,6 +1,5 @@
 package com.vorspack.service.serviceImpl;
 
-import com.vorspack.domain.Link;
 import com.vorspack.network.Html;
 import com.vorspack.service.LinkListService;
 import org.jsoup.nodes.Document;
@@ -22,7 +21,7 @@ public class LinkListServiceImpl implements LinkListService {
         Document document ;
         List<String> links=new ArrayList<>();
         try {
-            document = html.getHtmlDocument(url);
+            document = html.getDocument(url);
             Elements linkElements = document.getElementsByClass(LINK_CLASS);
             if (linkElements != null) {
                 links=linkElements.eachAttr("href");

@@ -13,6 +13,7 @@ repositories {
 }
 
 dependencies {
+    compile group: 'net.sourceforge.htmlunit', name: 'htmlunit', version: '2.32'
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.9.6'
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.6'
     compile group: 'org.jsoup', name: 'jsoup', version: '1.11.2'
