@@ -53,4 +53,16 @@ public class RegexToolTest {
             e.printStackTrace();
         }
     }
+
+    @Test
+    public void testGetToken() {
+        String text = "<input type=\"hidden\" name=\"profitcalcToken\" value=\"TYfKAwG7iF15KYzZJYAj2BTqstg6oj3D\">";
+        String token;
+        try {
+            token = RegexTool.getInfo("profitcalcToken\"([\\s\\w]+)=\"(\\w+)", text,2);
+            System.out.println("Token is "+token);
+        } catch (RegexNotMatchException e) {
+            e.printStackTrace();
+        }
+    }
 }

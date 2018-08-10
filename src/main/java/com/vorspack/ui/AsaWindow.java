@@ -8,8 +8,8 @@ import com.vorspack.service.LinkListService;
 import com.vorspack.service.ProductListService;
 import com.vorspack.service.ProductService;
 import com.vorspack.util.LogTool;
-import com.vorspack.util.ProductBasicInfo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import javax.imageio.ImageIO;
@@ -28,7 +28,7 @@ public class AsaWindow extends JPanel {
     private JTextArea resultTa = new JTextArea();
     private JTextField excelNameTf =new JTextField(10);
     private JTextField excelDestTf =new JTextField("E:\\Hai\\Excel文件\\抓取数据");
-
+    private JCheckBox bsCheckBox =new JCheckBox("Best Seller Page");
     private Product product;
     private String[] cellNames = {"图片","Asin","产品名","链接", "品牌", "卖家","卖家类型", "FBA", "自营", "评分", "上架时间", "review数量", "价格", "类目排名", "销量","净利润"};
 
@@ -39,9 +39,11 @@ public class AsaWindow extends JPanel {
     private ExcelExportService exportService;
 
     @Autowired
+    @Qualifier("BestSellerPageLls")
     private LinkListService linkListService;
 
     @Autowired
+    @Qualifier("BastSellerPagePls")
     private ProductListService productListService;
 
     @Autowired
@@ -61,6 +63,8 @@ public class AsaWindow extends JPanel {
         topPanel.add(createLabel("网址"));
         //添加网址的输入文本域
         topPanel.add(urlTf);
+        //添加选择框
+        topPanel.add(bsCheckBox);
         //添加excel输出路径文本域
         topPanel.add(excelDestTf);
         //添加excel的保存名称

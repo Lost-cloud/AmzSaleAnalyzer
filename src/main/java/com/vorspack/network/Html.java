@@ -8,14 +8,16 @@ import java.util.Map;
 
 public interface Html {
 
+
+
     String USER_AGENT = "User-Agent";
     String USER_AGENT_VALUE = "Mozilla/5.0 (Windows NT 10.0; Win64;  x64; rv:61.0) Gecko/20100101 Firefox/61.0";
 
     /**
-     * 通过get 方法得到对应url的jsoup document对象
-     * @param url 网址
-     * @return org.jsoup.nodes.Document
-     * @throws IOException IO连接异常
+     * 根据链接获取页面对应得文档对象，从而可以方便得到页面其它值
+     * @param url 链接
+     * @return Document 文件对象
+     * @throws IOException IO异常
      */
     Document getDocument(String url) throws IOException;
     Document getHtmlDocument(String url) throws IOException;
