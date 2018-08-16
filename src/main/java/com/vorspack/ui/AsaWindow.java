@@ -8,6 +8,7 @@ import com.vorspack.service.LinkListService;
 import com.vorspack.service.ProductListService;
 import com.vorspack.service.ProductService;
 import com.vorspack.util.LogTool;
+import com.vorspack.util.ProductBasicInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -179,7 +180,7 @@ public class AsaWindow extends JPanel {
 
         private void excelExport() {
             if (excelNameTf.getText().isEmpty() || excelDestTf.getText().isEmpty()) return;
-            exportService.makeWorkBook(excelDestTf.getText(), excelNameTf.getText(),ProductBasicInfo.getCellNames(),products);
+            exportService.makeWorkBook(excelDestTf.getText(), excelNameTf.getText(), ProductBasicInfo.getCellNames(),products);
         }
     }
 

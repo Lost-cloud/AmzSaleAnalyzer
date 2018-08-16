@@ -5,12 +5,14 @@ import com.vorspack.network.HtmlImpl;
 import com.vorspack.service.ReviewService;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
+import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 // TODO: 2018/6/18  评论放到最后再完善
+@Service
 public class ReviewServiceImpl implements ReviewService {
     /**
      * 获取评论

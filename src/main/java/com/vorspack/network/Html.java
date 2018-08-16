@@ -20,7 +20,6 @@ public interface Html {
      * @throws IOException IO异常
      */
     Document getDocument(String url) throws IOException;
-    Document getHtmlDocument(String url) throws IOException;
 
     Connection.Response getResponse(String url) throws IOException;
 

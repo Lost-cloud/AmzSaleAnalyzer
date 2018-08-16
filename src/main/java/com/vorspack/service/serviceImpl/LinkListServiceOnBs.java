@@ -24,7 +24,7 @@ public class LinkListServiceOnBs implements LinkListService {
         Document document;
         List<String> links = new ArrayList<>();
         try {
-            document = html.getHtmlDocument(url);
+            document = html.getDocument(url);
             Elements linkElements = document.getElementsContainingText("id=\"h10-asin");
             LogTool.getLog().info("链接没有获取到"+linkElements.toString());
             if (linkElements != null) {
@@ -43,7 +43,7 @@ public class LinkListServiceOnBs implements LinkListService {
         Element nextPageLi = document.selectFirst(".a-last");
         nextPageUrl = nextPageLi.selectFirst("a").attr("href");
         try {
-            Document doc = html.getHtmlDocument(nextPageUrl);
+            Document doc = html.getDocument(nextPageUrl);
             Elements linkElements = doc.getElementsContainingText("id=\"h10-asin-");
             if (linkElements != null) {
                 return linkElements.eachAttr("href"); //获取的链接需要添加https://www.amazon.com
