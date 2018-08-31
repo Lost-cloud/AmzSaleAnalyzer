@@ -33,7 +33,7 @@ public class ReviewServiceImplTest {
     private Html html;
 
     private static final String URL = "https://www.amazon.com/Waterproof-Drawstring-lightweight-Sackpack-backpack/product-reviews/B06XDP8NX8/ref=cm_cr_arp_d_viewopt_srt?" +
-            "ie=UTF8&reviewerType=all_reviews&filterByStar=positive&pageNumber=1&sortBy=recent";
+            "ie=UTF8&reviewerType=all_reviews&pageNumber=1";
     private Document document;
 
     private List<Review> reviewList;
